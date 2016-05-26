@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.webserviceX.NET"
+	xmlns:tns="http://www.webserviceX.NET" elementFormDefault="qualified">
+	<element name="string" nillable="true" type="string" />
+	<element name="GetWeather">
+		<complexType>
+			<sequence>
+				<element minOccurs="0" maxOccurs="1" name="CityName" type="string" />
+				<element minOccurs="0" maxOccurs="1" name="CountryName" type="string" />
+			</sequence>
+		</complexType>
+	</element>
+	<element name="GetWeatherResponse">
+		<complexType>
+			<sequence>
+				<element minOccurs="0" maxOccurs="1" name="GetWeatherResult"
+					type="string" />
+			</sequence>
+		</complexType>
+	</element>
+	<element name="GetCitiesByCountry">
+		<complexType>
+			<sequence>
+				<element minOccurs="0" maxOccurs="1" name="CountryName"
+					type="string" />
+			</sequence>
+		</complexType>
+	</element>
+	<element name="GetCitiesByCountryResponse">
+		<complexType>
+			<sequence>
+				<element minOccurs="0" maxOccurs="1" name="GetCitiesByCountryResult"
+					type="string" />
+			</sequence>
+		</complexType>
+	</element>
+</schema>

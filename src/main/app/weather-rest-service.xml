@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+	xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:ws="http://www.mulesoft.org/schema/mule/ws"
+	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+	<http:listener-config name="REST_Listener" host="0.0.0.0"
+		port="8778" doc:name="HTTP Listener Configuration" />
+	<ws:consumer-config name="Weather_Web_Service_Consumer"
+		service="GlobalWeather" port="GlobalWeatherSoap12"
+		serviceAddress="http://www.webservicex.com/globalweather.asmx"
+		wsdlLocation="globalweather.wsdl" doc:name="Web Service Consumer" />
+	<flow name="weather-rest-serviceFlow">
+		<http:listener config-ref="REST_Listener" path="/weather"
+			allowedMethods="GET" parseRequest="false"
+			metadata:id="961aa4f2-14fb-42b8-a784-5f107dedf7a0" doc:name="HTTP" />
+        <dw:transform-message metadata:id="74adab5d-11f4-46ed-ac10-13b85f4fffaa" doc:name="Transform Message">
+            <dw:input-inbound-property propertyName="http.query.params"/>
+            <dw:set-payload resource="classpath:request.dwl"/>
+        </dw:transform-message>
+        <response>
+            <dw:transform-message metadata:id="000470de-c3d4-4582-9d9d-495546176f35" doc:name="XML">
+                <dw:input-payload/>
+                <dw:set-payload resource="classpath:response.dwl"/>
+            </dw:transform-message>
+        </response>
+        <ws:consumer config-ref="Weather_Web_Service_Consumer" operation="GetWeather" doc:name="Weather Web Service"/>
+	</flow>
+</mule>
