@@ -3,4 +3,4 @@
 %output application/xml
 %namespace ns0 http://www.webserviceX.NET
 ---
-payload.ns0#GetWeatherResponse.ns0#GetWeatherResult
+response: trim payload.ns0#GetWeatherResponse.ns0#GetWeatherResult

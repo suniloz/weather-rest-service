@@ -21,12 +21,12 @@ http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/a
 		<http:listener config-ref="REST_Listener" path="/weather"
 			allowedMethods="GET" parseRequest="false"
 			metadata:id="961aa4f2-14fb-42b8-a784-5f107dedf7a0" doc:name="HTTP" />
-        <dw:transform-message metadata:id="74adab5d-11f4-46ed-ac10-13b85f4fffaa" doc:name="Transform Message">
+        <dw:transform-message metadata:id="74adab5d-11f4-46ed-ac10-13b85f4fffaa" doc:name="Request Transformer">
             <dw:input-inbound-property propertyName="http.query.params"/>
             <dw:set-payload resource="classpath:request.dwl"/>
         </dw:transform-message>
         <response>
-            <dw:transform-message metadata:id="000470de-c3d4-4582-9d9d-495546176f35" doc:name="XML">
+            <dw:transform-message metadata:id="000470de-c3d4-4582-9d9d-495546176f35" doc:name="Response Transformer">
                 <dw:input-payload/>
                 <dw:set-payload resource="classpath:response.dwl"/>
             </dw:transform-message>
