@@ -1,0 +1,8 @@
+Get weather monitoring location/city list for Country
+
+http://localhost:8778/cities?country=Australia
+
+
+Get Weather in City
+
+http://localhost:8778/weather?city=Canberra&country=Australia

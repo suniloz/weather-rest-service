@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
 	xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:ws="http://www.mulesoft.org/schema/mule/ws"
 	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
@@ -10,7 +10,8 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
-http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
 	<http:listener-config name="REST_Listener" host="0.0.0.0"
 		port="8778" doc:name="HTTP Listener Configuration" />
 	<ws:consumer-config name="Weather_Web_Service_Consumer"
@@ -25,12 +26,33 @@ http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/a
             <dw:input-inbound-property propertyName="http.query.params"/>
             <dw:set-payload resource="classpath:request.dwl"/>
         </dw:transform-message>
-        <response>
-            <dw:transform-message metadata:id="000470de-c3d4-4582-9d9d-495546176f35" doc:name="Response Transformer">
-                <dw:input-payload/>
-                <dw:set-payload resource="classpath:response.dwl"/>
-            </dw:transform-message>
-        </response>
         <ws:consumer config-ref="Weather_Web_Service_Consumer" operation="GetWeather" doc:name="Weather Web Service"/>
+        <dw:transform-message metadata:id="000470de-c3d4-4582-9d9d-495546176f35" doc:name="Response Transformer">
+            <dw:input-payload/>
+            <dw:set-payload resource="classpath:response.dwl"/>
+        </dw:transform-message>
+        <logger level="INFO" doc:name="Logger"/>
 	</flow>
+    <flow name="cities-rest-serviceFlow">
+        <http:listener config-ref="REST_Listener" path="/cities" allowedMethods="GET" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/xml
+%namespace ns0 http://www.webserviceX.NET
+---
+{
+	ns0#GetCitiesByCountry: {
+		ns0#CountryName: inboundProperties."http.query.params".country as :string
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <ws:consumer config-ref="Weather_Web_Service_Consumer" operation="GetCitiesByCountry" doc:name="Web Service Consumer"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload]]></dw:set-payload>
+        </dw:transform-message>
+        <logger level="INFO" doc:name="Logger"/>
+    </flow>
 </mule>

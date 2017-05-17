@@ -1,6 +1,6 @@
 %dw 1.0
 %input payload application/xml
-%output application/xml
+%output application/json
 %namespace ns0 http://www.webserviceX.NET
 ---
-response: trim payload.ns0#GetWeatherResponse.ns0#GetWeatherResult
+payload
